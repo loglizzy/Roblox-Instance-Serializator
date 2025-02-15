@@ -3,6 +3,12 @@
 -- types serializer functions, the Unpack function, and at the very end of development
 -- some compression algorithm made from scratch + Deflate compression as an optional when packing
 
+-- Tests:
+-- Big City map with 9015 parts was serialized in 1.2405s(thing i know would be great for perfomance:
+-- every map/model will always have a lot of identical Instances with a few different properties so it would
+-- be super great for perfomance and output size if i add 1 header of 2 bytes to each Instance serial data saying
+-- an index for an Instance in the model has at least 1 identical property to it)
+
 -- Get from raw API dump from: https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/refs/heads/roblox/API-Dump.json
 local API = game:GetService("HttpService"):JSONDecode(require(script.API))
 
