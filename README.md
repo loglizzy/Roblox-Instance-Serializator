@@ -1,8 +1,8 @@
-# Features
-* Focused on smallest size possible
-* Compressing
+## About
+Instance serializator module that's focused on size and time efficiency.
+Has a compressing function that can reduce >50% the already small output reaching very compact sizes.
 
-# Problems(i dont have so much time to that project)
+## Problems(i dont have so much time to that project)
 Is on very early stage so there maybe a lot of bugs and it could be wayyy faster and better
 * Needs more pre-computing/caching
 * Commenting and better structure
