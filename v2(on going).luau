@@ -1,5 +1,5 @@
 -- Much cleaner simpler faster than my first try (the one on roblox dev forum)
--- Pack function is currently 100x faster than v1, now I need to add the value
+-- Pack function is like 3000x faster than the one used in v1, now I need to add the value
 -- types serializer functions, the Unpack function, and at the very end of development
 -- some compression algorithm made from scratch + Deflate compression as an optional when packing
 
