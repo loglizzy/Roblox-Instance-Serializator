@@ -95,40 +95,17 @@ local serializers = {
 serializers.Size = serializers.Vector3
 
 do
-	-- Function to cache class properties and map them to property IDs
-	-- It saves property names, types, and IDs for later serialization
-	local function CacheClassProperty(prop: {}, propID: number, properties: {}, propertyNames: {}, propertyTypes: {})
-		if prop.MemberType ~= "Property" then return propID end
-
-		local propName = prop.Name
-		propID += 1
-
-		properties[propName] = propID
-		propertyNames[propID] = propName
-
-		if not propertiesSerializer[propName] then
-			local serializerFn = serializers[propName]
-			if not serializerFn then
-				local valueType = prop.ValueType
-				serializerFn = serializers[valueType.Category]
-					or serializers[valueType.Name]
-			end
-
-			propertiesSerializer[propName] = serializerFn
-		end
-
-		return propID
-	end
-
 	-- Function to cache data related to a class, including its properties
 	-- Loops through class members and stores their relevant data
-	local function CacheClass(class: {}, classID: number)
+	local function CacheClassProperties(class: {}, classID: number)
 		local propID = 0
 		local properties = classesPropertyMap[classID] or {}
 		local propertyNames = classesPropertyNames[classID] or {}
 
 		-- Loop through each property in the class and cache relevant data
 		for i, prop in class.Members do
+			if prop.MemberType ~= "Property" then continue end
+			
 			local tags = prop.Tags
 			if tags and table.find(tags, "ReadOnly") then continue end
 
@@ -136,7 +113,22 @@ do
 			if prop.Security.Write ~= "None" then continue end
 
 			-- Cache the property data
-			propID = CacheClassProperty(prop, propID, properties, propertyNames, propertyTypes)
+			local propName = prop.Name
+			propID += 1
+
+			properties[propName] = propID
+			propertyNames[propID] = propName
+
+			if not propertiesSerializer[propName] then
+				local serializerFn = serializers[propName]
+				if not serializerFn then
+					local valueType = prop.ValueType
+					serializerFn = serializers[valueType.Category]
+						or serializers[valueType.Name]
+				end
+
+				propertiesSerializer[propName] = serializerFn
+			end
 		end
 
 		-- Save the cached properties to their respective tables
@@ -159,7 +151,7 @@ do
 		classesIDMap[classID] = className
 
 		-- Cache class properties
-		CacheClass(class, classID)
+		CacheClassProperties(class, classID)
 	end
 
 	-- Loop through each class and its superclass to ensure all relevant data is cached
@@ -172,7 +164,7 @@ do
 
 			-- Get the data of the superclass and cache it
 			class = classesData[classes[superclass]]
-			CacheClass(class, classID)
+			CacheClassProperties(class, classID)
 		until false
 	end
 end
